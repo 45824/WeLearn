@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>WeLearn</title>
+
+<style>
+body { margin:0; font-family: Arial, sans-serif; }
+.container { display:flex; height:100vh; }
+.sidebar { width:220px; background:#f3f3f3; padding:15px; overflow-y:auto; }
+.menu-item { padding:8px; cursor:pointer; font-weight:bold; }
+.menu-item:hover { background:#ddd; }
+.dropdown { display:none; margin-left:15px; font-size:14px; }
+.dropdown a { display:block; padding:5px; text-decoration:none; color:black; }
+.dropdown a:hover { background:#ddd; }
+.main { flex:1; padding:20px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; }
+.search { width:300px; padding:8px; }
+.user-box { display:flex; align-items:center; gap:10px; }
+.avatar { width:35px; height:35px; background:#333; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+.logout { padding:6px 12px; cursor:pointer; }
+.cards { display:grid; grid-template-columns:repeat(2,1fr); gap:25px; }
+.card-link { text-decoration:none; color:black; }
+.card { border:2px solid #000; padding:20px; cursor:pointer; transition:0.2s; }
+.card:hover { background:#f5f5f5; transform:translateY(-2px); }
+.pdf { margin-top:10px; font-size:14px; color:#555; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+<a href="index.html" style="text-decoration:none; color:black;">
+<div class="menu-item">Home</div>
+</a>
+
+<div class="menu-item" onclick="showAll()">ทั้งหมดทุกวิชา</div>
+
+<div class="menu-item" onclick="toggleDropdown('math')">
+คณิตศาสตร์ ▾
+</div>
+<div class="dropdown" id="math">
+<a href="#" onclick="filterSubject('คณิตศาสตร์')">ทั้งหมด</a>
+<a href="#" onclick="filterData('คณิตศาสตร์','ม.1')">ม.1</a>
+<a href="#" onclick="filterData('คณิตศาสตร์','ม.2')">ม.2</a>
+<a href="#" onclick="filterData('คณิตศาสตร์','ม.3')">ม.3</a>
+<a href="#" onclick="filterData('คณิตศาสตร์','ม.4')">ม.4</a>
+<a href="#" onclick="filterData('คณิตศาสตร์','ม.5')">ม.5</a>
+<a href="#" onclick="filterData('คณิตศาสตร์','ม.6')">ม.6</a>
+</div>
+
+<div class="menu-item" onclick="toggleDropdown('scienceMain')">
+วิทยาศาสตร์ ▾
+</div>
+
+<div class="dropdown" id="scienceMain">
+  
+  <!-- พื้นฐาน -->
+  <div class="menu-item" onclick="toggleDropdown('basic')">พื้นฐาน ▾</div>
+  <div class="dropdown" id="basic">
+    <a href="#" onclick="filterSubject('พื้นฐาน')">ทั้งหมด</a>
+    <a href="#" onclick="filterData('พื้นฐาน','ม.1')">ม.1</a>
+    <a href="#" onclick="filterData('พื้นฐาน','ม.2')">ม.2</a>
+    <a href="#" onclick="filterData('พื้นฐาน','ม.3')">ม.3</a>
+  </div>
+
+  <!-- ฟิสิกส์ -->
+  <div class="menu-item" onclick="toggleDropdown('physics')">ฟิสิกส์ ▾</div>
+  <div class="dropdown" id="physics">
+    <a href="#" onclick="filterSubject('ฟิสิกส์')">ทั้งหมด</a>
+    <a href="#" onclick="filterData('ฟิสิกส์','ม.4')">ม.4</a>
+    <a href="#" onclick="filterData('ฟิสิกส์','ม.5')">ม.5</a>
+    <a href="#" onclick="filterData('ฟิสิกส์','ม.6')">ม.6</a>
+  </div>
+
+  <!-- เคมี -->
+  <div class="menu-item" onclick="toggleDropdown('chem')">เคมี ▾</div>
+  <div class="dropdown" id="chem">
+    <a href="#" onclick="filterSubject('เคมี')">ทั้งหมด</a>
+    <a href="#" onclick="filterData('เคมี','ม.4')">ม.4</a>
+    <a href="#" onclick="filterData('เคมี','ม.5')">ม.5</a>
+    <a href="#" onclick="filterData('เคมี','ม.6')">ม.6</a>
+  </div>
+
+  <!-- ชีวะ -->
+  <div class="menu-item" onclick="toggleDropdown('bio')">ชีววิทยา ▾</div>
+  <div class="dropdown" id="bio">
+    <a href="#" onclick="filterSubject('ชีววิทยา')">ทั้งหมด</a>
+    <a href="#" onclick="filterData('ชีววิทยา','ม.4')">ม.4</a>
+    <a href="#" onclick="filterData('ชีววิทยา','ม.5')">ม.5</a>
+    <a href="#" onclick="filterData('ชีววิทยา','ม.6')">ม.6</a>
+  </div>
+
+</div>
+
+<!-- ภาษาไทย -->
+<div class="menu-item" onclick="toggleDropdown('thai')">ภาษาไทย ▾</div>
+<div class="dropdown" id="thai">
+  <a href="#" onclick="filterSubject('ภาษาไทย')">ทั้งหมด</a>
+  <a href="#" onclick="filterData('ภาษาไทย','ม.1')">ม.1</a>
+  <a href="#" onclick="filterData('ภาษาไทย','ม.2')">ม.2</a>
+  <a href="#" onclick="filterData('ภาษาไทย','ม.3')">ม.3</a>
+  <a href="#" onclick="filterData('ภาษาไทย','ม.4')">ม.4</a>
+  <a href="#" onclick="filterData('ภาษาไทย','ม.5')">ม.5</a>
+  <a href="#" onclick="filterData('ภาษาไทย','ม.6')">ม.6</a>
+</div>
+
+<!-- ภาษาอังกฤษ -->
+<div class="menu-item" onclick="toggleDropdown('english')">ภาษาอังกฤษ ▾</div>
+<div class="dropdown" id="english">
+  <a href="#" onclick="filterSubject('ภาษาอังกฤษ')">ทั้งหมด</a>
+  <a href="#" onclick="filterData('ภาษาอังกฤษ','ม.1')">ม.1</a>
+  <a href="#" onclick="filterData('ภาษาอังกฤษ','ม.2')">ม.2</a>
+  <a href="#" onclick="filterData('ภาษาอังกฤษ','ม.3')">ม.3</a>
+  <a href="#" onclick="filterData('ภาษาอังกฤษ','ม.4')">ม.4</a>
+  <a href="#" onclick="filterData('ภาษาอังกฤษ','ม.5')">ม.5</a>
+  <a href="#" onclick="filterData('ภาษาอังกฤษ','ม.6')">ม.6</a>
+</div>
+
+<!-- สังคม -->
+<div class="menu-item" onclick="toggleDropdown('social')">สังคม ▾</div>
+<div class="dropdown" id="social">
+  <a href="#" onclick="filterSubject('สังคม')">ทั้งหมด</a>
+  <a href="#" onclick="filterData('สังคม','ม.1')">ม.1</a>
+  <a href="#" onclick="filterData('สังคม','ม.2')">ม.2</a>
+  <a href="#" onclick="filterData('สังคม','ม.3')">ม.3</a>
+  <a href="#" onclick="filterData('สังคม','ม.4')">ม.4</a>
+  <a href="#" onclick="filterData('สังคม','ม.5')">ม.5</a>
+  <a href="#" onclick="filterData('สังคม','ม.6')">ม.6</a>
+</div>
+
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<div class="topbar">
+<input class="search" id="search" type="text" placeholder="ค้นหาบทเรียน">
+<div class="user-box">
+<div class="avatar" id="avatar"></div>
+<span id="usernameDisplay"></span>
+<button class="logout" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<div class="cards" id="cardsContainer"></div>
+
+</div>
+</div>
+
+<script>
+
+// 🔒 protect page
+if (localStorage.getItem("loggedIn") !== "true") {
+window.location.href = "login.html";
+}
+
+// 👤 show user
+const username = localStorage.getItem("currentUser");
+document.getElementById("usernameDisplay").innerText = username;
+document.getElementById("avatar").innerText = username.charAt(0).toUpperCase();
+
+function logout(){
+localStorage.removeItem("loggedIn");
+localStorage.removeItem("currentUser");
+window.location.href="login.html";
+}
+
+// dropdown
+function toggleDropdown(id){
+const d=document.getElementById(id);
+d.style.display = d.style.display==="block" ? "none":"block";
+}
+
+let allData=[];
+
+// โหลด JSON
+fetch("data.json")
+.then(r=>r.json())
+.then(data=>{
+allData=data;
+renderCards(data);
+});
+
+function renderCards(data){
+const container=document.getElementById("cardsContainer");
+container.innerHTML="";
+data.forEach(c=>{
+container.innerHTML+=`
+<a class="card-link" data-search="${c.title} ${c.subject} ${c.grade}" href="${c.file}" target="_blank">
+<div class="card">
+<b>${c.subject}</b><br>
+เรื่อง ${c.title}
+<div class="pdf">${c.grade}</div>
+</div>
+</a>
+`;
+});
+}
+
+// filter จาก sidebar
+function filterData(subject, grade, category=null){
+
+const filtered = allData.filter(item => {
+
+if(category){
+return item.subject === subject &&
+       item.grade === grade &&
+       item.category === category;
+}
+
+return item.subject === subject &&
+       item.grade === grade;
+});
+
+renderCards(filtered);
+}
+
+
+function filterSubject(subject){
+const filtered=allData.filter(c=>c.subject===subject);
+renderCards(filtered);
+}
+
+function filterCategory(category){
+const filtered=allData.filter(c=>c.category===category);
+renderCards(filtered);
+}
+
+function showAll(){
+renderCards(allData);
+}
+
+// search
+document.getElementById("search").addEventListener("keyup",function(){
+const keyword=this.value.toLowerCase();
+document.querySelectorAll(".card-link").forEach(card=>{
+const text=card.dataset.search.toLowerCase();
+card.style.display = text.includes(keyword) ? "block":"none";
+});
+});
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
