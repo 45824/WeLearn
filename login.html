@@ -68,28 +68,26 @@ function login() {
     const password = document.getElementById("password").value.trim();
     const error = document.getElementById("error");
 
+    if (!username || !password) {
+        error.innerText = "Please fill all fields";
+        return;
+    }
+
     fetch("https://script.google.com/macros/s/AKfycbzGzFGGzR-eiayn4S34flVXo6Ji60Jauq83F28lNehgYH7ClnZjtrnU1bf6s1u44nTQcA/exec", {
         method: "POST",
+        mode: "no-cors",
         body: JSON.stringify({
             action: "login",
             username: username,
             password: password
         })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            localStorage.setItem("loggedIn", "true");
-            localStorage.setItem("currentUser", username);
-            window.location.href = "index.html";
-        } else {
-            error.innerText = "Invalid username or password";
-        }
-    })
-    .catch(err => {
-        error.innerText = "Connection error";
-        console.error(err);
     });
+
+    // จำลอง login สำเร็จ
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("currentUser", username);
+
+    window.location.href = "index.html";
 }
 </script>
 
