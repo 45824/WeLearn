@@ -1,20 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<script>
-fetch("https://script.google.com/a/macros/wattano.ac.th/s/AKfycbzMd_k9gZHw580GP0WfUUF2hZncQovMtH2nqXx3zh531MjRAIsjdyYRQuPvSRlU_TaGgg/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    username,
-    password
-  })
-})
-
-</script>
-
-
 <head>
 <meta charset="UTF-8">
 <title>Register</title>
@@ -97,7 +82,7 @@ function register() {
         return;
     }
 
-    fetch("PUT_YOUR_SCRIPT_URL_HERE", {
+    fetch("YOUR_SCRIPT_URL_HERE", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -108,23 +93,26 @@ function register() {
             password: password
         })
     })
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
         if (data.status === "success") {
             msg.style.color = "green";
-            msg.innerText = "Register success!";
+            msg.innerText = "Register success! Redirecting...";
             setTimeout(() => {
                 window.location.href = "login.html";
             }, 1500);
         } else {
             msg.style.color = "red";
-            msg.innerText = data.message;
+            msg.innerText = data.message || "Register failed";
         }
+    })
+    .catch(error => {
+        msg.style.color = "red";
+        msg.innerText = "Connection error";
+        console.error(error);
     });
 }
-
 </script>
 
 </body>
 </html>
-
