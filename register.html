@@ -13,7 +13,6 @@ body {
     align-items: center;
     height: 100vh;
 }
-
 .box {
     background: white;
     padding: 30px;
@@ -21,17 +20,12 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
-
-h2 {
-    text-align: center;
-}
-
+h2 { text-align: center; }
 input {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
 }
-
 button {
     width: 100%;
     padding: 10px;
@@ -40,13 +34,11 @@ button {
     border: none;
     cursor: pointer;
 }
-
 .msg {
     text-align: center;
     font-size: 14px;
     margin-top: 10px;
 }
-
 a {
     display: block;
     text-align: center;
@@ -84,16 +76,13 @@ function register() {
 
     fetch("https://script.google.com/macros/s/AKfycbzGzFGGzR-eiayn4S34flVXo6Ji60Jauq83F28lNehgYH7ClnZjtrnU1bf6s1u44nTQcA/exec", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify({
             action: "register",
             username: username,
             password: password
         })
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
         if (data.status === "success") {
             msg.style.color = "green";
@@ -116,5 +105,3 @@ function register() {
 
 </body>
 </html>
-
-
