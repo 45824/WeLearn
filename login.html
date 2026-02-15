@@ -13,6 +13,7 @@ body {
     align-items: center;
     height: 100vh;
 }
+
 .box {
     background: white;
     padding: 30px;
@@ -20,12 +21,17 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
-h2 { text-align: center; }
+
+h2 {
+    text-align: center;
+}
+
 input {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
 }
+
 button {
     width: 100%;
     padding: 10px;
@@ -34,11 +40,13 @@ button {
     border: none;
     cursor: pointer;
 }
+
 .error {
     color: red;
     text-align: center;
     font-size: 14px;
 }
+
 a {
     display: block;
     text-align: center;
@@ -68,26 +76,17 @@ function login() {
     const password = document.getElementById("password").value.trim();
     const error = document.getElementById("error");
 
-    if (!username || !password) {
-        error.innerText = "Please fill all fields";
-        return;
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("currentUser", username);
+        window.location.href = "index.html";
+    } else {
+        error.innerText = "Invalid username or password";
     }
-
-    fetch("https://script.google.com/macros/s/AKfycbzGzFGGzR-eiayn4S34flVXo6Ji60Jauq83F28lNehgYH7ClnZjtrnU1bf6s1u44nTQcA/exec", {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({
-            action: "login",
-            username: username,
-            password: password
-        })
-    });
-
-    // จำลอง login สำเร็จ
-    localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("currentUser", username);
-
-    window.location.href = "index.html";
 }
 </script>
 

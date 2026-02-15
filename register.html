@@ -1,5 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+<script>
+fetch("https://script.google.com/a/macros/wattano.ac.th/s/AKfycbzMd_k9gZHw580GP0WfUUF2hZncQovMtH2nqXx3zh531MjRAIsjdyYRQuPvSRlU_TaGgg/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    username,
+    password
+  })
+})
+
+</script>
+
+
 <head>
 <meta charset="UTF-8">
 <title>Register</title>
@@ -13,6 +28,7 @@ body {
     align-items: center;
     height: 100vh;
 }
+
 .box {
     background: white;
     padding: 30px;
@@ -20,12 +36,17 @@ body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
-h2 { text-align: center; }
+
+h2 {
+    text-align: center;
+}
+
 input {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
 }
+
 button {
     width: 100%;
     padding: 10px;
@@ -34,11 +55,13 @@ button {
     border: none;
     cursor: pointer;
 }
+
 .msg {
     text-align: center;
     font-size: 14px;
     margin-top: 10px;
 }
+
 a {
     display: block;
     text-align: center;
@@ -74,15 +97,17 @@ function register() {
         return;
     }
 
-    fetch("https://script.google.com/macros/s/AKfycbzGzFGGzR-eiayn4S34flVXo6Ji60Jauq83F28lNehgYH7ClnZjtrnU1bf6s1u44nTQcA/exec", {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({
-            action: "register",
-            username: username,
-            password: password
-        })
-    });
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const exists = users.find(u => u.username === username);
+    if (exists) {
+        msg.style.color = "red";
+        msg.innerText = "Username already exists";
+        return;
+    }
+
+    users.push({ username, password });
+    localStorage.setItem("users", JSON.stringify(users));
 
     msg.style.color = "green";
     msg.innerText = "Register success! Redirecting...";
