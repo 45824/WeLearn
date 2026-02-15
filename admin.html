@@ -12,9 +12,8 @@ margin:0;
 padding:20px;
 }
 
-h2{margin-top:0}
+h2,h3{margin-top:0}
 
-/* LOGIN BOX */
 #loginBox{
 max-width:400px;
 margin:100px auto;
@@ -25,71 +24,79 @@ box-shadow:0 5px 15px rgba(0,0,0,0.15);
 text-align:center;
 }
 
-#loginBox input{
+#loginBox input,#loginBox button{
 width:100%;
 padding:10px;
-margin:10px 0;
+margin:8px 0;
 }
 
 #loginBox button{
-width:100%;
 background:#24292e;
 color:white;
 border:none;
-padding:10px;
 border-radius:8px;
 cursor:pointer;
 }
 
-/* ADMIN PANEL */
 #adminPanel{
 display:none;
+max-width:1200px;
+margin:auto;
+}
+
+.topbox,.card{
+background:white;
+padding:15px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 .card{
-background:white;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:center;
+}
+
+.card input,.card select{
+flex:1 1 150px;
 }
 
 input,select{
-width:100%;
 padding:8px;
-margin:5px 0;
+border-radius:6px;
+border:1px solid #ccc;
 }
 
 button{
-padding:8px 15px;
-margin-top:5px;
-cursor:pointer;
+padding:8px 14px;
 border:none;
 border-radius:6px;
-}
-
-.topbox{
-background:white;
-padding:15px;
-border-radius:10px;
-margin-bottom:20px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
+cursor:pointer;
 }
 
 .repoBtn{
 display:block;
 width:100%;
-margin:6px 0;
+margin:5px 0;
 background:#24292e;
 color:white;
 }
 
-.repoBtn:hover{ opacity:0.85; }
-
 .success{ background:#1a7f37;color:white;}
 .load{ background:#0969da;color:white;}
 .logout{ background:#cf222e;color:white;}
+
+@media(max-width:768px){
+body{padding:10px}
+.card{
+flex-direction:column;
+align-items:stretch;
+}
+}
 </style>
+
 </head>
 <body>
 
@@ -177,27 +184,20 @@ color:white;
 
 <script>
 
-/* LOGIN SYSTEM */
+/* LOGIN */
 function login(){
-const pass=document.getElementById("adminPass").value;
-if(pass==="1234"){
-document.getElementById("loginBox").style.display="none";
-document.getElementById("adminPanel").style.display="block";
-}else{
-alert("รหัสผิด");
+if(document.getElementById("adminPass").value==="1234"){
+loginBox.style.display="none";
+adminPanel.style.display="block";
+}else alert("รหัสผิด");
 }
-}
+function logout(){ location.reload(); }
 
-function logout(){
-location.reload();
-}
-
-/* REPO LINK */
 function goRepo(path){
-window.open("https://github.com/45824-arch/test"+path,"_blank");
+window.open(`https://github.com/${value("owner")}/${value("repo")}`+path,"_blank");
 }
 
-/* DATA SYSTEM */
+/* SYSTEM */
 let allData=[];
 let dataSHA="";
 let fileList=[];
@@ -205,31 +205,31 @@ let fileList=[];
 function value(id){ return document.getElementById(id).value; }
 
 function toBase64UTF8(str){
-const bytes=new TextEncoder().encode(str);
-let binary="";
-bytes.forEach(b=>binary+=String.fromCharCode(b));
-return btoa(binary);
+return btoa(unescape(encodeURIComponent(str)));
 }
 
 function fromBase64UTF8(base64){
-const binary=atob(base64);
-const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
-return new TextDecoder().decode(bytes);
+return decodeURIComponent(escape(atob(base64)));
 }
 
 async function initLoad(){
-if(!value("token")){ alert("ใส่ Token ก่อน"); return; }
 await loadFiles();
 await loadData();
 alert("โหลดสำเร็จ");
 }
 
+/* โหลดไฟล์ */
 async function loadFiles(){
 const res=await fetch(`https://api.github.com/repos/${value("owner")}/${value("repo")}/contents/FilesFolder`,{
 headers:{Authorization:"token "+value("token")}
 });
 const data=await res.json();
 fileList=data.filter(f=>f.type==="file").map(f=>"FilesFolder/"+f.name);
+updateFileSelect();
+}
+
+/* update dropdown ทุกจุด */
+function updateFileSelect(){
 const select=document.getElementById("newFileSelect");
 select.innerHTML='<option value="">-- เลือกไฟล์ --</option>';
 fileList.forEach(f=>{
@@ -237,6 +237,7 @@ select.innerHTML+=`<option value="${f}">${f.replace("FilesFolder/","")}</option>
 });
 }
 
+/* โหลด data.json */
 async function loadData(){
 const res=await fetch(`https://api.github.com/repos/${value("owner")}/${value("repo")}/contents/data.json`,{
 headers:{Authorization:"token "+value("token")}
@@ -247,6 +248,7 @@ dataSHA=data.sha;
 renderCards();
 }
 
+/* Save */
 async function saveData(){
 const jsonString=JSON.stringify(allData,null,2);
 await fetch(`https://api.github.com/repos/${value("owner")}/${value("repo")}/contents/data.json`,{
@@ -256,25 +258,41 @@ Authorization:"token "+value("token"),
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-message:"Update data.json via Admin Panel",
+message:"Update data.json",
 content:toBase64UTF8(jsonString),
 sha:dataSHA
 })
 });
 alert("บันทึกสำเร็จ");
+await loadData();
 }
 
+/* แสดง Card */
 function renderCards(){
 const container=document.getElementById("cardList");
 container.innerHTML="";
+
 allData.forEach((item,index)=>{
 container.innerHTML+=`
 <div class="card">
-<input value="${item.title}" onchange="allData[${index}].title=this.value">
+
+<input value="${item.title}" 
+onchange="allData[${index}].title=this.value">
+
+<select onchange="allData[${index}].subject=this.value">
+${generateOptions(["คณิตศาสตร์","พื้นฐาน","ฟิสิกส์","เคมี","ชีววิทยา","ภาษาไทย","ภาษาอังกฤษ","สังคม"],item.subject)}
+</select>
+
 <select onchange="allData[${index}].grade=this.value">
 ${generateOptions(["ม.1","ม.2","ม.3","ม.4","ม.5","ม.6"],item.grade)}
 </select>
-<button onclick="deleteCard(${index})">❌ Delete</button>
+
+<select onchange="allData[${index}].file=this.value">
+${generateOptions(fileList,item.file)}
+</select>
+
+<button onclick="deleteCard(${index})">❌</button>
+
 </div>`;
 });
 }
@@ -282,7 +300,7 @@ ${generateOptions(["ม.1","ม.2","ม.3","ม.4","ม.5","ม.6"],item.grade)}
 function generateOptions(array,selected){
 let html="";
 array.forEach(val=>{
-html+=`<option value="${val}" ${val===selected?"selected":""}>${val}</option>`;
+html+=`<option value="${val}" ${val===selected?"selected":""}>${val.replace("FilesFolder/","")}</option>`;
 });
 return html;
 }
@@ -298,17 +316,21 @@ file:value("newFileSelect")
 renderCards();
 }
 
+/* ลบ */
 function deleteCard(index){
 allData.splice(index,1);
 renderCards();
 }
 
+/* Upload + Real Time Update */
 async function uploadFile(){
 const file=document.getElementById("fileUpload").files[0];
 if(!file){ alert("เลือกไฟล์ก่อน"); return; }
+
 const reader=new FileReader();
 reader.onload=async function(){
 const base64=reader.result.split(",")[1];
+
 await fetch(`https://api.github.com/repos/${value("owner")}/${value("repo")}/contents/FilesFolder/${file.name}`,{
 method:"PUT",
 headers:{
@@ -320,14 +342,22 @@ message:"Upload "+file.name,
 content:base64
 })
 });
-alert("Upload สำเร็จ");
+
+alert("Upload สำเร็จ 🚀");
+
+/* โหลดไฟล์ใหม่ทันที */
 await loadFiles();
+renderCards(); // refresh dropdown ทุก card
+
 };
+
 reader.readAsDataURL(file);
 }
 
 </script>
+
 </body>
 </html>
+
 
 
